@@ -17,12 +17,16 @@ let shoppingCart = [];
 
 function makeButton() {
   $('div[class="col col-xs-12 col-md-6 col-lg-4"]').append(`<button name='item'>Add to Cart</button>`)
+  $('button[name=\'item\']').on('click', function() {
+    console.log($(this).parent().find('p').eq(0).html());
+    let parent =  $(this).parent();
+    let itemName = $(this).parent().find('h2').eq(0).html();
+    let itemPrice = $(this).parent().find('p').eq(1).html();
+    itemPrice = parseFloat(itemPrice.replace(/[^0-9.-]+/g, ''));
+    shoppingCart.push({'name': itemName, 'price': itemPrice});
+    MakeCart();
+  });
 };
-
-$('button[name=\'item\']').on('click', function() {
-  let itemID = this.id;
-  addToCart(itemID);
-});
 
 function addToCart(itemID) {
   let item = availItems[itemID];
@@ -41,7 +45,7 @@ function MakeCart() {
     let cartList = $('ul[name=\'cartList\'')
     for (item in shoppingCart) {
       console.log(item);
-      cartList.append(`<li cart_id='${item}'>${shoppingCart[item].name} --- ${shoppingCart[item].price}</li> <button id="${item}" name="remove" style="display: inline;" type="button" class="remove btn btn-primary">remove</button>`);
+      cartList.append(`<li cart_id='${item}'>${shoppingCart[item].name} --- $${shoppingCart[item].price}</li> <button id="${item}" name="remove" style="display: inline;" type="button" class="remove btn btn-primary">remove</button>`);
       cartTotal += shoppingCart[item].price;
     }
     $('button[name=\'remove\']').on('click', function() {
@@ -58,6 +62,7 @@ function MakeCart() {
     $('#checkout_button').on('click', function() {
       checkOut();
     });
+    cart.append(`<div class=check_out></div>`)
   } else {
     cart.append(`<h3>Shopping Cart Empty</h3>`);
   }
@@ -67,7 +72,19 @@ makeButton();
 MakeCart();
 
 function checkOut() {
-  alert("Check it out!")
+  let checkOut = $('.check_out')
+  checkOut.empty();
+  checkOut.append(`
+  <h3>Check Out</h3>
+    <div><input type="text" placeholder="First Name"/><input type="text" placeholder="Last Name"/></div>
+    <br />
+    <div><textarea rows="4" placeholder="Shipping Address" /></textarea></div>
+    <br />
+    <input type="submit" value="Place Order"></input>
+  `);
+  $('input[type=\'submit\'').on('click', function() {
+    alert('Check it Out!');
+  });
 }
 
 function removeItem(itemID) {
