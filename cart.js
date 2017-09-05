@@ -15,15 +15,13 @@ const availItems = [
 
 let shoppingCart = [];
 
+function makeButton() {
+  $('div[class="col col-xs-12 col-md-6 col-lg-4"]').append(`<button name='item'>Add to Cart</button>`)
+};
+
 $('button[name=\'item\']').on('click', function() {
   let itemID = this.id;
   addToCart(itemID);
-});
-
-$('button[name=\'remove\']').on('click', function() {
-  console.log('Clicky!');
-  shoppingCart.splice(this.cartID, 1);
-  MakeCart();
 });
 
 function addToCart(itemID) {
@@ -42,14 +40,15 @@ function MakeCart() {
     cart.append('<ul name=\'cartList\'>');
     let cartList = $('ul[name=\'cartList\'')
     for (item in shoppingCart) {
-      cartList.append(`<li cart_id = ${item}>${shoppingCart[item].name} --- ${shoppingCart[item].price}</li> <button cart_id = ${item} name="remove" style="display: inline;" type="button" class="btn btn-primary">remove</button>`);
+      console.log(item);
+      cartList.append(`<li cart_id='${item}'>${shoppingCart[item].name} --- ${shoppingCart[item].price}</li> <button id="${item}" name="remove" style="display: inline;" type="button" class="remove btn btn-primary">remove</button>`);
       cartTotal += shoppingCart[item].price;
-      $(`button[cart_id=${item}]`).on('click', function() {
-        console.log('Clicky!');
-        shoppingCart.splice(item, 1);
-        MakeCart();
-      });
     }
+    $('button[name=\'remove\']').on('click', function() {
+      console.log(this.id);
+      delete shoppingCart[this.id];
+      MakeCart();
+    });
     cart.append(`<h4>Subtotal $${cartTotal.toFixed(2)}</h4>`);
     let cartTax = cartTotal*0.1;
     cart.append(`<p>Tax (10.0%): $${cartTax.toFixed(2)}</p>`);
@@ -64,8 +63,14 @@ function MakeCart() {
   }
 };
 
+makeButton();
 MakeCart();
 
 function checkOut() {
   alert("Check it out!")
+}
+
+function removeItem(itemID) {
+  shoppingCart.splice(itemID, 1);
+  MakeCart();
 }
