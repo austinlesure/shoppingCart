@@ -20,8 +20,10 @@ $('button[name=\'item\']').on('click', function() {
   addToCart(itemID);
 });
 
-$('button[name=\'remove\'').on('click', function() {
-  console.log('Clicky!')
+$('button[name=\'remove\']').on('click', function() {
+  console.log('Clicky!');
+  shoppingCart.splice(this.cartID, 1);
+  MakeCart();
 });
 
 function addToCart(itemID) {
@@ -32,19 +34,38 @@ function addToCart(itemID) {
 };
 
 function MakeCart() {
-  console.log('Clickaroo!');
+
   let cartTotal = 0
   let cart = $('.cart');
   cart.empty();
-  let cartList = cart.append($('ul'));
-  cartList.append('<li>Hello!</li>')
-  for (item in shoppingCart) {
-    cartList.append(`<li>${shoppingCart[item].name}</li><li>${shoppingCart[item].price}</li>`);
-    cartTotal += shoppingCart[item].price;
+  if (shoppingCart.length !== 0) {
+    cart.append('<ul name=\'cartList\'>');
+    let cartList = $('ul[name=\'cartList\'')
+    for (item in shoppingCart) {
+      cartList.append(`<li cart_id = ${item}>${shoppingCart[item].name} --- ${shoppingCart[item].price}</li> <button cart_id = ${item} name="remove" style="display: inline;" type="button" class="btn btn-primary">remove</button>`);
+      cartTotal += shoppingCart[item].price;
+      $(`button[cart_id=${item}]`).on('click', function() {
+        console.log('Clicky!');
+        shoppingCart.splice(item, 1);
+        MakeCart();
+      });
+    }
+    cart.append(`<h4>Subtotal $${cartTotal.toFixed(2)}</h4>`);
+    let cartTax = cartTotal*0.1;
+    cart.append(`<p>Tax (10.0%): $${cartTax.toFixed(2)}</p>`);
+    cartTotal += cartTax;
+    cart.append(`<h3>Total: $${cartTotal.toFixed(2)}<h3>`);
+    cart.append(`<button id='checkout_button'>Check Out</button>`);
+    $('#checkout_button').on('click', function() {
+      checkOut();
+    });
+  } else {
+    cart.append(`<h3>Shopping Cart Empty</h3>`);
   }
-  cart.append(`<h4>Subtotal $${cartTotal.toFixed(2)}</h4>`);
-  let cartTax = cartTotal*0.1;
-  cart.append(`<p>Tax (10.0%): $${cartTax.toFixed(2)}</p>`);
-  cartTotal += cartTax;
-  cart.append(`<h3>Total: $${cartTotal.toFixed(2)}<h3>`)
 };
+
+MakeCart();
+
+function checkOut() {
+  alert("Check it out!")
+}
